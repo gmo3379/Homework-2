@@ -42,17 +42,15 @@ int main(int argc, const char * argv[]) {
                 for (int x=0 ; x<arrayIndex ; x++){
                     size_t found = temp.find(variableNames[x]);
                     if (found != string::npos) {
-                        temp.replace(found, sizeof(to_string(variableValues[x]))-1, to_string(variableValues[x]));
+                        temp.replace(found, variableNames[x].size(), to_string(variableValues[x]));
                     }
                 }
                 variableValues[arrayIndex] = evaluate(temp);
                 arrayIndex++;
             }
+            
         }
     }
-    
-    cout << variableNames[0] << variableValues[0] << endl;
-    cout << variableNames[1] << variableValues[1] << endl;
 }
 
 double evaluate(string expr)
