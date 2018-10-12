@@ -18,11 +18,15 @@ int main(int argc, const char * argv[]) {
 	string line;
 	ifstream input;
 	string variableNames[10];
-	int variableValues[10];
+	int functionVariableValues[10];
+    string functionVariableNames[10];
+    int variableValues[10];
 	int arrayIndex = 0;
+    int functionArrayIndex = 0;
 	bool assignmentLine = false;
+    bool inFunction = false;
 
-	input.open("myFile.txt");
+	input.open("/Users/guillermo/Desktop/Homework 2/Homework 2/text.py");
 
 
 	
@@ -33,40 +37,80 @@ int main(int argc, const char * argv[]) {
 
 	while (getline(input, line)) {
 		string temp = "";
-		for (int i = 0; i < line.size(); i++) {
-			if (line[i] == '=') {
-				variableNames[arrayIndex] = temp;
-				temp = "";
-				assignmentLine = true;
-			}
-			if (iswspace(line[i])) {
+        
+        size_t defFound = line.find("def");
+        size_t returnFound = line.find("return");
+        if (defFound != string::npos){
+            inFunction = true;
+        }
+        else if (returnFound != string::npos) {
+            inFunction = false;
+            temp = "";
+            for (int x = 0; x<functionArrayIndex; x++) {
+                size_t found = line.find(functionVariableNames[x]);
+                if (found != string::npos) {
+                    variableNames[arrayIndex] = "f()";
+                    variableValues[arrayIndex] = functionVariableValues[x];
+                    arrayIndex++;
+                }
+            }
+        }
+        else {
+            for (int i = 0; i < line.size(); i++) {
+                if (line[i] == '=') {
+                    if (inFunction){
+                        functionVariableNames[functionArrayIndex] = temp;
+                    }
+                    else {
+                        variableNames[arrayIndex] = temp;
+                    }
+                    temp = "";
+                    assignmentLine = true;
+                }
+                if (iswspace(line[i])) {
 
-			}
-			if (line[i] != '=' && !iswspace(line[i])) {
-				temp = temp + line[i];
-			}
-
-
-			
-			if (i == (line.size() - 1) && assignmentLine) {
-				for (int x = 0; x<arrayIndex; x++) {
-					size_t found = temp.find(variableNames[x]);
-					if (found != string::npos) {
-						temp.replace(found, variableNames[x].size(), to_string(variableValues[x]));
-					}
-				}
-				variableValues[arrayIndex] = evaluate(temp);
-				arrayIndex++;
-			}
-
-		}
+                }
+                if (line[i] != '=' && !iswspace(line[i])) {
+                    temp = temp + line[i];
+                }
+                
+                if (i == (line.size() - 1) && assignmentLine) {
+                    
+                    if (inFunction){
+                        for (int x = 0; x<functionArrayIndex; x++) {
+                            size_t found = temp.find(functionVariableNames[x]);
+                            if (found != string::npos) {
+                                temp.replace(found, functionVariableNames[x].size(), to_string(functionVariableValues[x]));
+                            }
+                        }
+                    }
+                    else {
+                        for (int x = 0; x<arrayIndex; x++) {
+                            size_t found = temp.find(variableNames[x]);
+                            if (found != string::npos) {
+                                temp.replace(found, variableNames[x].size(), to_string(variableValues[x]));
+                            }
+                        }
+                    }
+                    
+                    if (inFunction){
+                        functionVariableValues[functionArrayIndex] = evaluate(temp);
+                        functionArrayIndex++;
+                    }
+                    else {
+                        variableValues[arrayIndex] = evaluate(temp);
+                        arrayIndex++;
+                    }
+                }
+            }
+        }
 	}
-
-	for (int i = 0; i < 4; i++) {
-		cout << variableNames[i] << variableValues[i] << endl;
-	}
-	
-	getchar();
+	//for (int i = 0; i < 3; i++) {
+	//	cout << functionVariableNames[i] << functionVariableValues[i] << endl;
+	//}
+    for (int i = 0; i < 4; i++) {
+        cout << variableNames[i] << variableValues[i] << endl;
+    }
 	return 0;
 }
 

@@ -1,3 +1,7 @@
-xx=5+1
-y=xx+4
-z=xx+y
+def f():
+   x=1
+   y=2
+   t= x+y
+   return t
+x=1+3*100/2+f()
+y=x*100+10*3
