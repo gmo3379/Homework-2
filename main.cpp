@@ -25,6 +25,7 @@ int main(int argc, const char * argv[]) {
     int functionArrayIndex = 0;
 	bool assignmentLine = false;
     bool inFunction = false;
+    bool inStringPrint = false;
 
 	input.open("/Users/guillermo/Desktop/Homework 2/Homework 2/text.py");
 
@@ -40,22 +41,64 @@ int main(int argc, const char * argv[]) {
         
         size_t defFound = line.find("def");
         size_t returnFound = line.find("return");
+        size_t printFound = line.find ("print");
+        
         if (defFound != string::npos){
             inFunction = true;
         }
         else if (returnFound != string::npos) {
             inFunction = false;
             temp = "";
+            
+            for (int x=static_cast<int>(returnFound)+7; x< line.size();x++){
+                temp = temp + line[x];
+            }
+            
             for (int x = 0; x<functionArrayIndex; x++) {
-                size_t found = line.find(functionVariableNames[x]);
-                if (found != string::npos) {
+                if (temp == functionVariableNames[x]) {
                     variableNames[arrayIndex] = "f()";
                     variableValues[arrayIndex] = functionVariableValues[x];
                     arrayIndex++;
                 }
             }
         }
-        else {
+        if (printFound != string::npos){
+            size_t openParenthesisIndex = line.find('(');
+            for (int x=static_cast<int>(openParenthesisIndex)+1; x< line.size();x++){
+                if(line[x] == ',' && !inStringPrint){
+                    temp = "";
+                }
+                else if (line[x] == '"' && !inStringPrint){
+                    inStringPrint = true;
+                }
+                else if (line[x] == '"' && inStringPrint){
+                    inStringPrint = false;
+                    cout << temp;
+                }
+                else if (line[x] != '"' && line[x] != ')'){
+                    temp=temp+line[x];
+                }
+                else if (!inStringPrint){
+                    if (inFunction){
+                        for (int x = 0; x<functionArrayIndex; x++) {
+                            size_t found = temp.find(functionVariableNames[x]);
+                            if (found != string::npos) {
+                                cout << functionVariableValues[x];
+                            }
+                        }
+                    }
+                    else {
+                        for (int x = 0; x<arrayIndex; x++) {
+                            size_t found = temp.find(variableNames[x]);
+                            if (found != string::npos) {
+                                cout << variableValues[x];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        else if (returnFound == string::npos) {
             for (int i = 0; i < line.size(); i++) {
                 if (line[i] == '=') {
                     if (inFunction){
@@ -83,6 +126,7 @@ int main(int argc, const char * argv[]) {
                                 temp.replace(found, functionVariableNames[x].size(), to_string(functionVariableValues[x]));
                             }
                         }
+                        
                     }
                     else {
                         for (int x = 0; x<arrayIndex; x++) {
@@ -105,12 +149,12 @@ int main(int argc, const char * argv[]) {
             }
         }
 	}
-	//for (int i = 0; i < 3; i++) {
-	//	cout << functionVariableNames[i] << functionVariableValues[i] << endl;
-	//}
-    for (int i = 0; i < 4; i++) {
+	/*for (int i = 0; i < 3; i++) {
+		cout << functionVariableNames[i] << "= " << functionVariableValues[i] << endl;
+	}
+    for (int i = 0; i < 3; i++) {
         cout << variableNames[i] << variableValues[i] << endl;
-    }
+    }*/
 	return 0;
 }
 
