@@ -1,7 +1,6 @@
-def f():
-    m=40
-    n=80
-    t=n/m
-    return t
-x = f() + 30/2
-print ("x=",x)
+x = 34
+y = 17
+
+if x>34:
+   d = x / y
+print("d=",d)

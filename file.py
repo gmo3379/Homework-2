@@ -8,6 +8,6 @@ def f():
       t= x+y
    return t
 x=1+3*100/2+f()
-y=x*100+10*3.1416
+y=x*100+10*31416
 print("x=",x)
 print("y=",y)
